@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe Savon::Client do
-  let(:client) { Savon::Client.new { wsdl.document = Endpoint.wsdl } }
+  let(:client) { Savon::Client.new(Endpoint.wsdl) }
 
   describe ".new" do
     context "with a String" do
@@ -14,14 +14,14 @@ describe Savon::Client do
 
     context "with a block expecting one argument" do
       it "should yield the WSDL object" do
-        Savon::Client.new { |wsdl| wsdl.should be_a(Savon::Wasabi::Document) }
+        Savon::Client.new { |wsdl| wsdl.should be_a(Wasabi::Document) }
       end
     end
 
     context "with a block expecting two arguments" do
       it "should yield the WSDL and HTTP objects" do
         Savon::Client.new do |wsdl, http|
-          wsdl.should be_an(Savon::Wasabi::Document)
+          wsdl.should be_an(Wasabi::Document)
           http.should be_an(HTTPI::Request)
         end
       end
@@ -30,7 +30,7 @@ describe Savon::Client do
     context "with a block expecting three arguments" do
       it "should yield the WSDL, HTTP and WSSE objects" do
         Savon::Client.new do |wsdl, http, wsse|
-          wsdl.should be_an(Savon::Wasabi::Document)
+          wsdl.should be_an(Wasabi::Document)
           http.should be_an(HTTPI::Request)
           wsse.should be_an(Akami::WSSE)
         end
@@ -39,7 +39,7 @@ describe Savon::Client do
 
     context "with a block expecting no arguments" do
       it "should let you access the WSDL object" do
-        Savon::Client.new { wsdl.should be_a(Savon::Wasabi::Document) }
+        Savon::Client.new { wsdl.should be_a(Wasabi::Document) }
       end
 
       it "should let you access the HTTP object" do
@@ -53,8 +53,8 @@ describe Savon::Client do
   end
 
   describe "#wsdl" do
-    it "should return the Savon::Wasabi::Document" do
-      client.wsdl.should be_a(Savon::Wasabi::Document)
+    it "should return the Wasabi::Document" do
+      client.wsdl.should be_a(Wasabi::Document)
     end
   end
 
@@ -176,7 +176,7 @@ describe Savon::Client do
       it "should yield the SOAP and WSDL objects" do
         client.request(:authenticate) do |soap, wsdl|
           soap.should be_a(Savon::SOAP::XML)
-          wsdl.should be_an(Savon::Wasabi::Document)
+          wsdl.should be_an(Wasabi::Document)
         end
       end
     end
@@ -185,7 +185,7 @@ describe Savon::Client do
       it "should yield the SOAP, WSDL and HTTP objects" do
         client.request(:authenticate) do |soap, wsdl, http|
           soap.should be_a(Savon::SOAP::XML)
-          wsdl.should be_an(Savon::Wasabi::Document)
+          wsdl.should be_an(Wasabi::Document)
           http.should be_an(HTTPI::Request)
         end
       end
@@ -195,7 +195,7 @@ describe Savon::Client do
       it "should yield the SOAP, WSDL, HTTP and WSSE objects" do
         client.request(:authenticate) do |soap, wsdl, http, wsse|
           soap.should be_a(Savon::SOAP::XML)
-          wsdl.should be_a(Savon::Wasabi::Document)
+          wsdl.should be_a(Wasabi::Document)
           http.should be_an(HTTPI::Request)
           wsse.should be_a(Akami::WSSE)
         end
@@ -216,7 +216,7 @@ describe Savon::Client do
       end
 
       it "should let you access the WSDL object" do
-        client.request(:authenticate) { wsdl.should be_a(Savon::Wasabi::Document) }
+        client.request(:authenticate) { wsdl.should be_a(Wasabi::Document) }
       end
     end
 
@@ -432,7 +432,7 @@ describe Savon::Client do
     before { HTTPI.expects(:get).never }
 
     it "raise an ArgumentError when trying to access the WSDL" do
-      lambda { client.wsdl.soap_actions }.should raise_error(ArgumentError, /Wasabi/)
+      lambda { client.wsdl.soap_actions }.should raise_error(ArgumentError)
     end
 
     it "adds a SOAPAction header containing the SOAP action name" do

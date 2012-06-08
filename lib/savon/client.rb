@@ -1,7 +1,7 @@
 require "httpi/request"
 require "akami"
+require "wasabi"
 
-require "savon/wasabi/document"
 require "savon/soap/xml"
 require "savon/soap/request"
 require "savon/soap/response"
@@ -145,7 +145,7 @@ module Savon
       soap_action = args[2].delete(:soap_action) || args[1]
       set_soap_action soap_action
 
-      if wsdl.document? && (operation = wsdl.operations[args[1]]) && operation[:namespace_identifier]
+      if wsdl.document && (operation = wsdl.operations[args[1]]) && operation[:namespace_identifier]
         soap.namespace_identifier = operation[:namespace_identifier].to_sym
         soap.namespace = wsdl.parser.namespaces[soap.namespace_identifier.to_s]
 
@@ -161,14 +161,14 @@ module Savon
 
     # Expects an +input+ and sets the +SOAPAction+ HTTP headers.
     def set_soap_action(input_tag)
-      soap_action = wsdl.soap_action(input_tag.to_sym) if wsdl.document?
+      soap_action = wsdl.soap_action(input_tag.to_sym) if wsdl.document
       soap_action ||= Gyoku::XMLKey.create(input_tag).to_sym
       http.headers["SOAPAction"] = %{"#{soap_action}"}
     end
 
     # Expects a +namespace+, +input+ and +attributes+ and sets the SOAP input.
     def set_soap_input(namespace, input, attributes)
-      new_input_tag = wsdl.soap_input(input.to_sym) if wsdl.document?
+      new_input_tag = wsdl.soap_input(input.to_sym) if wsdl.document
       new_input_tag ||= Gyoku::XMLKey.create(input)
       soap.input = [namespace, new_input_tag.to_sym, attributes]
     end

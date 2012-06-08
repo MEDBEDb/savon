@@ -1,3 +1,7 @@
+## 2.0.0
+
+* Refactoring: Moved the WSDL document resolver to Wasabi v2.4.0.
+
 ## 1.0.0 (UPCOMING)
 
 * Improvement: [#291](https://github.com/rubiii/savon/issues/291) changed the `:soap_request` hook to act
